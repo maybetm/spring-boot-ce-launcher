@@ -1,6 +1,5 @@
 package ru.maybetm.spring.boot.ce.launcher
 
-import com.intellij.execution.ShortenCommandLine
 import com.intellij.execution.application.ApplicationConfiguration
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationType
@@ -35,21 +34,25 @@ class ConfigurationFactory(type: ConfigurationType) : ConfigurationFactory(type)
 class RunConfiguration(project: Project, factory: ConfigurationFactory) :
     ApplicationConfiguration(PLUGIN_NAME, project, factory) {
 
+    companion object {
+        val MAIN_CLASS_NAMES = setOf("SPRING_BOOT_MAIN_CLASS", "MAIN_CLASS_NAME")
+    }
+
     override fun readExternal(element: Element) {
         super.readExternal(element)
-        // fixme тут падает исключение, при открытии меню редактирования
-        val mainClass = element.getChildren("option")
+
+        val mainClass: String? = element.getChildren("option")
             .map { it.attributes }
             .filter { it.isNotEmpty() }
             .first { attributes -> attributes.filter { it.name.equals("name") }
-                    .any { it.value.equals("SPRING_BOOT_MAIN_CLASS") }
+                    .any { attribute -> MAIN_CLASS_NAMES.any { it.equals(attribute.value, ignoreCase = true) } }
             }
-            .first { it.name.equals("value") }
-            .value
+            ?.firstOrNull { it.name.equals("value") }
+            ?.value
 
-        this.options.mainClassName = mainClass
-        this.mainClassName = mainClass
-        // fixme будто бы это должно быть указано в родительском конфиге и для спрингбута
-        this.options.shortenClasspath = ShortenCommandLine.ARGS_FILE
+        mainClass?.let {
+            this.options.mainClassName = mainClass
+            this.mainClassName = mainClass
+        }
     }
 }
