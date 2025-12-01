@@ -31,17 +31,17 @@ interface RemoteRunManager {
 interface RemoteRunnerAndConfigurationSettings
 
 @Remote("com.intellij.execution.ui.RunContentManager")
-interface MyRunContentManager {
-    fun getAllDescriptors(): List<MyRunContentDescriptorRef>
+interface RemoteRunContentManager {
+    fun getAllDescriptors(): List<RemoteRunContentDescriptor>
 }
 
 @Remote("com.intellij.execution.ui.RunContentDescriptor")
-interface MyRunContentDescriptorRef {
-    fun getProcessHandler(): MYProcessHandlerRef?
+interface RemoteRunContentDescriptor {
+    fun getProcessHandler(): RemoteProcessHandler?
 }
 
 @Remote("com.intellij.execution.process.ProcessHandler")
-interface MYProcessHandlerRef {
+interface RemoteProcessHandler {
     fun destroyProcess()
 }
 
@@ -115,7 +115,7 @@ class PluginTest {
                 { runBlocking { healthChecker.hasStarted() } }
             )
 
-            service(MyRunContentManager::class, project)
+            service(RemoteRunContentManager::class, project)
                 .getAllDescriptors().first().getProcessHandler()!!
                 .destroyProcess()
             waitFor(
