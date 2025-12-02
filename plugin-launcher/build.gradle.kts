@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.register
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("java")
@@ -7,7 +8,7 @@ plugins {
 }
 
 group = "ru.maybetm"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
   mavenCentral()
@@ -23,7 +24,7 @@ tasks {
     targetCompatibility = "21"
   }
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "21"
+      compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
   }
 }
 
@@ -34,9 +35,13 @@ intellijPlatform {
     }
 
     changeNotes = """
-      Initial version
+      First release version
     """.trimIndent()
   }
+}
+
+tasks.withType<Zip>().named("buildPlugin") {
+  archiveBaseName.set("spring-boot-ce-launcher")
 }
 
 // Configure Gradle IntelliJ Plugin
