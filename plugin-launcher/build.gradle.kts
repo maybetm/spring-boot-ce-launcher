@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.register
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("java")
@@ -23,7 +24,7 @@ tasks {
     targetCompatibility = "21"
   }
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "21"
+      compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
   }
 }
 
